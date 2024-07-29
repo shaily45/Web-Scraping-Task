@@ -1,24 +1,55 @@
-# README
+# YCombinator Scraper
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Description
+This is a Rails project using Ruby version 2.7.8. The project setup includes bundling gems and setting up the database.
 
-Things you may want to cover:
+## Setup
 
-* Ruby version
+1. **Install Ruby 2.7.8**
 
-* System dependencies
+	If you are using RVM, you can install and use Ruby 2.7.8 with the following commands:
+	```sh
+	rvm install 2.7.8
+	rvm use 2.7.8
+	```
 
-* Configuration
+2. **Install Gems**
 
-* Database creation
+	Run the following command to install the necessary gems:
+	```sh
+	  bundle install
+	```
 
-* Database initialization
+3. **Set Up the Database**
 
-* How to run the test suite
+	Run the following command to set up the database:
+	```sh
+	rails db:setup
+	```
 
-* Services (job queues, cache servers, search engines, etc.)
+4. **Precompile Assets**
+   
+  Run the following command:
+  ```sh
+  rails assets:precompile
+  ```
 
-* Deployment instructions
+5. **Start the Rails server**
 
-* ...
+	To start the Rails server, use the following command:
+  ```sh
+  rails server
+  ```
+
+6. **To provide input for the scraper, you can use a JSON structure like the following:**
+
+  ```json
+  {
+	  "n": 5,
+	  "filters": {
+	    "batch": "W21",
+	    "industry": "Healthcare",
+	    "is_hiring": true
+	  }
+	}
+	```
