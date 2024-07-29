@@ -1,0 +1,71 @@
+<div style="text-align: center; margin: 1rem;">
+  <h1>Y Combinator Scraper</h1>
+  <%= form_with url: '/api/v1/scrape', method: :post, id: 'scrape-form' do |form| %>
+    <%= form.label :filters, 'Filters (JSON Format)' %>
+    <div class="form-group" style="margin: 1rem;">
+    <%= form.text_area :filters, class: 'form-control',rows: 10, cols: 30, required: true %>
+    </div>
+    <%= form.submit 'Scrape Companies', class: 'btn btn-primary' %>
+  <% end %>
+
+  <div id="loading-indicator" style="display: none;">
+    <p>Fetching data...</p>
+  </div>
+
+  <div id="download-link" style="display: none;">
+    <a id="download-csv-link" class="btn btn-success" href="#" download>Download CSV</a>
+  </div>
+
+  <div id="error-message" style="display: none;">
+    <p>There was an error processing your request.</p>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('scrape-form');
+  const loadingIndicator = document.getElementById('loading-indicator');
+  const downloadLink = document.getElementById('download-link');
+  const errorMessage = document.getElementById('error-message');
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    loadingIndicator.style.display = 'block';
+    downloadLink.style.display = 'none';
+    errorMessage.style.display = 'none';
+
+    const formData = new FormData(form);
+    fetch(form.action, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (response.status == 200) {
+        const contentType = response.headers.get('Content-Type');
+        if (contentType.includes('text/csv')) {
+          return response.blob().then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const downloadCSVLink = document.getElementById('download-csv-link');
+            downloadCSVLink.href = url;
+            downloadCSVLink.download = "yc_companies.csv";
+            loadingIndicator.style.display = 'none';
+            downloadLink.style.display = 'block';
+          });
+        } 
+      } 
+      else if(response.status == 400){
+        throw new Error('Invalid or missing parameter');
+      }
+      else {
+        throw new Error('No data to export');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      loadingIndicator.style.display = 'none';
+      errorMessage.style.display = 'block';
+      errorMessage.textContent = error.message;
+    });
+  });
+});
+</script>
